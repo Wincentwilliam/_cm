@@ -1,35 +1,34 @@
 import numpy as np
 
-def cubic_roots(coeffs):
-    # Ensure it's cubic
-    if len(coeffs) != 4:
-        print("Error: This function only handles cubic polynomials (degree 3).")
-        return
+def root(c):
+    # Convert to list copy so original isn't modified
+    c = list(c)
 
-    # Normalize coefficients so leading term = 1
-    c = [ci / coeffs[-1] for ci in coeffs]
+    # Remove trailing zeros in highest-degree coefficients
+    while len(c) > 1 and abs(c[-1]) < 1e-14:
+        c.pop()
 
-    # Companion matrix
-    companion = np.zeros((3,3))
-    companion[1:, :-1] = np.eye(2)
+    n = len(c) - 1  # polynomial degree
+
+    if n == 0:
+        return []  # constant polynomial has no roots
+    
+    if n == 1:
+        # ax + b = 0 → -b / a
+        return [-c[0] / c[1]]
+
+    # Normalize polynomial so leading term is 1
+    c = [ci / c[-1] for ci in c]
+
+    # Build companion matrix
+    companion = np.zeros((n, n))
+    companion[1:, :-1] = np.eye(n - 1)
     companion[0, :] = -np.array(c[:-1])
 
     # Eigenvalues = roots
     roots = np.linalg.eigvals(companion)
+    return roots
 
-    # Convert NumPy floats to standard Python floats and round
-    real_roots = [round(float(r.real), 10) for r in roots if abs(r.imag) < 1e-10]
-
-    # Sort descending
-    real_roots.sort(reverse=True)
-
-    # Calculate discriminant Δ = b^2 - 3ac (for cubic)
-    a, b, c_, d = c[-1], c[-2], c[-3], c[-4]
-    Δ = b**2 - 3*a*c_
-    print(f"判別式 Δ = {Δ:.4f}")
-    print(f"answer: {tuple(real_roots)}")
-    return real_roots
-
-# Example usage
-coeffs = [-6, 11, -6, 1]  # x^3 - 6x^2 + 11x - 6
-cubic_roots(coeffs)
+# Example: x^3 - 6x^2 + 11x - 6 has roots 1, 2, 3
+coeffs = [-6, 11, -6, 1]
+print(root(coeffs))
