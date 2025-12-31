@@ -1,17 +1,36 @@
-Fourier Transform Implementation Notes
-This document contains the Python implementation of the Discrete Fourier Transform (DFT).
-1. Mathematical Formulas (Simplified)
-Since we are using code, we represent the continuous integral formulas as discrete summations:
-Forward Transform (dft):
-F[k] = Sum from n=0 to N-1 of [ f[n] * e^(-i * 2 * pi * k * n / N) ]
-Inverse Transform (idft):
-f[n] = (1/N) * Sum from k=0 to N-1 of [ F[k] * e^(i * 2 * pi * k * n / N) ]
-2. Python Code Implementation
+# Fourier Transform: Python Implementation Study Notes
+
+This document provides a scratch-built implementation of the Discrete Fourier Transform (DFT) and its Inverse (IDFT) in Python, following the mathematical principles of signal processing.
+
+---
+
+## 1. Mathematical Concept
+
+The formulas in the assignment represent the **Continuous Fourier Transform**. However, in Python, we work with lists of data, so we use the **Discrete** versions:
+
+### Forward Transform (dft)
+We convert a signal from the **Time Domain** to the **Frequency Domain**.
+- **Logic:** `F[k] = Sum(f[n] * e^(-i * 2 * pi * k * n / N))`
+
+### Inverse Transform (idft)
+We convert the frequency data back into the **original signal**.
+- **Logic:** `f[n] = (1/N) * Sum(F[k] * e^(i * 2 * pi * k * n / N))`
+- *Note: In discrete computing, we use 1/N as the scaling factor to recover the original amplitude.*
+
+---
+
+## 2. Python Code Implementation
+
+This implementation uses the built-in `cmath` library for complex number calculations.
+
+```python
 import cmath
 
 def dft(f):
     """
     1. Forward Discrete Fourier Transform
+    Inputs: f (list of real or complex numbers)
+    Outputs: F (list of frequency components)
     """
     N = len(f)
     F = [0] * N
@@ -27,6 +46,8 @@ def dft(f):
 def idft(F):
     """
     2. Inverse Discrete Fourier Transform
+    Inputs: F (frequency components)
+    Outputs: f (recovered signal)
     """
     N = len(F)
     f_recovered = [0] * N
@@ -36,24 +57,29 @@ def idft(F):
             # Formula: F(k) * e^(i * 2 * pi * k * n / N)
             angle = 2j * cmath.pi * k * n / N
             sum_val += F[k] * cmath.exp(angle)
-        # Scale by 1/N
+        # Apply normalization 1/N
         f_recovered[n] = sum_val / N
     return f_recovered
 
 # 3. Verification Script
 if __name__ == "__main__":
+    # Define a test function f
     f_original = [1.0, 2.0, 3.0, 4.0, 5.0]
-    print(f"Original Signal:  {f_original}")
+    print(f"Original Signal f:    {f_original}")
 
-    # Forward
-    F_omega = dft(f_original)
+    # Forward transform
+    F_freq = dft(f_original)
     
-    # Backward
-    f_back = idft(F_omega)
+    # Inverse transform
+    f_recovered = idft(F_freq)
     
-    # Clean up results for display
-    f_back_real = [round(val.real, 10) for val in f_back]
-    print(f"Recovered Signal: {f_back_real}")
-
-    if f_original == f_back_real:
-        print("\nVerification: SUCCESS!")
+    # Clean up results (remove tiny floating point errors)
+    f_final = [round(val.real, 10) for val in f_recovered]
+    
+    print(f"Recovered Signal f:   {f_final}")
+    
+    # Check if they are the same
+    if f_original == f_final:
+        print("\nSUCCESS: The recovered function matches the original function!")
+    else:
+        print("\nFAILURE: Data mismatch.")
