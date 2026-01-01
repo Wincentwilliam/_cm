@@ -90,6 +90,3 @@ for i in range(len(data_to_plot) - 1):
 ax.set_title("3D Lorenz Attractor: Chaos Theory via Data Engineering", color='white', fontsize=15)
 ax.axis('off')
 plt.show()
-
-## 5. *Conclusion*
-By combining Non-linear Differential Equations with Data Engineering techniques, this project demonstrates how we can capture and visualize the complex geometry of chaos. The resulting "Butterfly" shape is not just a drawing; it is the physical representation of thousands of mathematical calculations tracked, saved to a database (CSV), and reconstructed in 3D space. It proves that even in deterministic systems, complexity and beauty can emerge from simple mathematical rules.
