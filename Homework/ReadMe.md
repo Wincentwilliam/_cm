@@ -1,4 +1,64 @@
-Homework 7:
+# Homework 6
+# 2D Geometry Toolkit
+
+A Python-based geometric engine to define fundamental shapes (Points, Lines, Circles, Triangles) and perform complex operations like intersection detection, perpendicular projections, and affine transformations.
+
+## Features
+
+- **Geometric Definitions**: Object-oriented representation of `Point`, `Line`, `Circle`, and `Triangle`.
+- **Intersection Algorithms**: 
+  - Line-Line intersections.
+  - Line-Circle intersections.
+  - Circle-Circle intersections.
+- **Geometric Construction**: Calculate the perpendicular foot from a point to a line.
+- **Theorem Verification**: Automated verification of the Pythagorean Theorem using generated coordinates.
+- **Transformations**: Support for **Translation**, **Scaling**, and **Rotation**.
+
+---
+
+## Mathematical Background
+
+### 1. Geometric Intersections
+
+**Line-Line Intersection**  
+Lines are represented in the standard form: `ax + by + c = 0`. Finding the intersection involves solving a system of two linear equations using **Cramer's Rule**. If the determinant is zero, the lines are parallel.
+
+**Line-Circle Intersection**  
+1. Calculate the shortest distance `d` from the circle center to the line.
+2. If `d > r`, no intersection exists.
+3. If `d <= r`, find the perpendicular foot of the center onto the line.
+4. Calculate the offset `h = sqrt(r^2 - d^2)` to find the specific points along the line.
+
+**Circle-Circle Intersection**  
+By subtracting the equations of two circles, the quadratic terms (x² and y²) cancel out, leaving a linear equation: `ax + by + c = 0`. This is the **Radical Axis**. The intersection points of the circles are found by intersecting this line with either circle.
+
+---
+
+### 2. Perpendicular Foot and Pythagoras
+
+- **Perpendicular Foot**: To find the projection of point `P` onto line `L`, we calculate a point `P'` such that the vector `PP'` is parallel to the line's normal vector `(a, b)`.
+- **Pythagorean Theorem**: In a right triangle with legs `a, b` and hypotenuse `c`, the script verifies that `a² + b² = c²` by calculating Euclidean distances between the generated points.
+
+---
+
+### 3. Transformations (Linear Algebra)
+
+- **Translation**: Vector addition: `P' = P + V`.
+- **Scaling**: Resizing relative to center `C`: `P' = C + s(P - C)`.
+- **Rotation**: Rotating a point `(x, y)` by angle `θ` using the rotation matrix:
+  - `x' = x * cos(θ) - y * sin(θ)`
+  - `y' = x * sin(θ) + y * cos(θ)`
+
+---
+
+## Usage
+
+### Running the Script
+```bash
+python geometry_toolkit.py
+```
+
+# Homework 7 
 Shannon’s Big Picture: How Information Survives Noise
 
 Claude Shannon basically laid down the law for all modern communication — WiFi, 4G, 5G, Bluetooth, satellite, everything.
@@ -67,7 +127,60 @@ Together, they explain:
 => How fast you can send it,
 => And how to make it reliable even when the world is noisy.
 
-Homework 9:
+# Homework 8
+# Mathematical Principles of Z-test and T-test
+
+## 1. Central Limit Theorem (CLT)
+The foundation of these tests. It states that the sampling distribution of the sample mean ($\bar{x}$) will be normally distributed if $n \ge 30$.
+- **Standard Error (SE):** $$SE = \frac{\sigma}{\sqrt{n}}$$
+
+---
+
+## 2. One-Sample Z-test
+**Usage:** Population $\mu$ and $\sigma$ are **known**.
+
+$$Z = \frac{\bar{x} - \mu}{\sigma / \sqrt{n}}$$
+
+---
+
+## 3. One-Sample T-test
+**Usage:** Population $\sigma$ is **unknown**. We use sample standard deviation ($s$) instead.
+
+$$t = \frac{\bar{x} - \mu}{s / \sqrt{n}}$$
+*Degrees of Freedom ($df$) = $n - 1$*
+
+---
+
+## 4. Independent Two-Sample T-test
+**Usage:** Comparing two different, independent groups.
+
+**The formula:**
+$$t = \frac{\bar{x}_1 - \bar{x}_2}{s_p \sqrt{\frac{1}{n_1} + \frac{1}{n_2}}}$$
+
+**Pooled Standard Deviation ($s_p$):**
+$$s_p = \sqrt{\frac{(n_1-1)s_1^2 + (n_2-1)s_2^2}{n_1 + n_2 - 2}}$$
+
+---
+
+## 5. Paired Sample T-test
+**Usage:** Same group at two different times (e.g., Before/After).
+Let $d$ be the difference between each pair.
+
+$$t = \frac{\bar{d}}{s_d / \sqrt{n}}$$
+*Where $\bar{d}$ is the mean of the differences.*
+
+---
+
+## Summary Comparison Table
+
+| Test | Pop. $\sigma$ | Formula |
+| :--- | :--- | :--- |
+| **Z-test** | Known | $Z = \frac{\bar{x}-\mu}{\sigma/\sqrt{n}}$ |
+| **One-Sample T** | Unknown | $t = \frac{\bar{x}-\mu}{s/\sqrt{n}}$ |
+| **Two-Sample T** | Unknown | $t = \frac{\bar{x}_1-\bar{x}_2}{SE_{diff}}$ |
+| **Paired T** | Unknown | $t = \frac{\bar{d}}{s_d/\sqrt{n}}$ |
+
+# Homework 9
 ### 1. The Meaning of "Linear" and "Algebra"
 In this context, **Linear** refers to a relationship governed by the principles of superposition. A function or map $f$ is linear if it satisfies two specific rules:
 1.  **Additivity:** $f(x + y) = f(x) + f(y)$
@@ -145,94 +258,7 @@ $$ A = U \Sigma V^T $$
 **Principal Component Analysis (PCA)** is a statistical technique used for dimensionality reduction. It finds the "principal directions" (eigenvectors) where data varies the most.
 **Relationship:** SVD is the standard computational method used to perform PCA. Instead of calculating the computationally expensive covariance matrix ($C = X^T X$) and finding its eigenvalues, we can simply run SVD on the centered data matrix $X$. The resulting singular values and vectors provide the principal components directly and efficiently.
 
-Homework 10:
-# Fourier Transform: Python Implementation Study Notes
-
-This document provides a scratch-built implementation of the Discrete Fourier Transform (DFT) and its Inverse (IDFT) in Python, following the mathematical principles of signal processing.
-
----
-
-## 1. Mathematical Concept
-
-The formulas in the assignment represent the **Continuous Fourier Transform**. However, in Python, we work with lists of data, so we use the **Discrete** versions:
-
-### Forward Transform (dft)
-We convert a signal from the **Time Domain** to the **Frequency Domain**.
-- **Logic:** `F[k] = Sum(f[n] * e^(-i * 2 * pi * k * n / N))`
-
-### Inverse Transform (idft)
-We convert the frequency data back into the **original signal**.
-- **Logic:** `f[n] = (1/N) * Sum(F[k] * e^(i * 2 * pi * k * n / N))`
-- *Note: In discrete computing, we use 1/N as the scaling factor to recover the original amplitude.*
-
----
-
-## 2. Python Code Implementation
-
-This implementation uses the built-in `cmath` library for complex number calculations.
-
-```python
-import cmath
-
-def dft(f):
-    """
-    1. Forward Discrete Fourier Transform
-    Inputs: f (list of real or complex numbers)
-    Outputs: F (list of frequency components)
-    """
-    N = len(f)
-    F = [0] * N
-    for k in range(N):
-        sum_val = 0
-        for n in range(N):
-            # Formula: f(n) * e^(-i * 2 * pi * k * n / N)
-            angle = -2j * cmath.pi * k * n / N
-            sum_val += f[n] * cmath.exp(angle)
-        F[k] = sum_val
-    return F
-
-def idft(F):
-    """
-    2. Inverse Discrete Fourier Transform
-    Inputs: F (frequency components)
-    Outputs: f (recovered signal)
-    """
-    N = len(F)
-    f_recovered = [0] * N
-    for n in range(N):
-        sum_val = 0
-        for k in range(N):
-            # Formula: F(k) * e^(i * 2 * pi * k * n / N)
-            angle = 2j * cmath.pi * k * n / N
-            sum_val += F[k] * cmath.exp(angle)
-        # Apply normalization 1/N
-        f_recovered[n] = sum_val / N
-    return f_recovered
-
-# 3. Verification Script
-if __name__ == "__main__":
-    # Define a test function f
-    f_original = [1.0, 2.0, 3.0, 4.0, 5.0]
-    print(f"Original Signal f:    {f_original}")
-
-    # Forward transform
-    F_freq = dft(f_original)
-    
-    # Inverse transform
-    f_recovered = idft(F_freq)
-    
-    # Clean up results (remove tiny floating point errors)
-    f_final = [round(val.real, 10) for val in f_recovered]
-    
-    print(f"Recovered Signal f:   {f_final}")
-    
-    # Check if they are the same
-    if f_original == f_final:
-        print("\nSUCCESS: The recovered function matches the original function!")
-    else:
-        print("\nFAILURE: Data mismatch.")
-
-Homework 11:
+# Homework 10
 # Engineering Mathematics: ODE Solver Notes
 
 ## 1. Problem Definition
@@ -295,99 +321,3 @@ The Python function `solve_ode_general(coefficients)` follows these logical step
 
 ---
 
-Midterm Exam:
-# Chaos Theory & Data Engineering: Visualizing the Lorenz Attractor
-
-## 1. Project Overview & Attribution
-* **Student Name:** 洪偉升
-* **Submission Date:** 2025/12/31
-* **Course:** Math and coding
-* **Professor:** ccckmit (Chen Zhongcheng)
-
-### Source Declaration (As per Requirement #7)
-> **Statement of Originality:** This project utilizes AI (Claude/ChatGPT) for high-level mathematical modeling and Python architecture. I have integrated the components, customized the data engineering pipeline (CSV persistence), and documented the theoretical derivation to demonstrate academic understanding.
-> 
-> **AI Usage:** Used AI to generate the core Lorenz algorithm and documentation structure.
-> **Code Origin:** Modified from AI-generated logic to include data persistence and specialized 3D visualization.
-
----
-
-## 2. Mathematical Theory: The Lorenz Equations
-The **Lorenz Attractor** is a mathematical object that demonstrates **Deterministic Chaos**. It was discovered by meteorologist Edward Lorenz while modeling atmospheric convection.
-
-### The Problem: The Butterfly Effect
-In a chaotic system, a tiny change in the initial state (e.g., changing $1.0$ to $1.000001$) leads to a massive difference in the long-term path. This is known as "sensitive dependence on initial conditions."
-
-### The Mathematical Formula
-The system is defined by three non-linear ordinary differential equations (ODEs):
-
-$$ \frac{dx}{dt} = \sigma(y - x) $$
-$$ \frac{dy}{dt} = x(\rho - z) - y $$
-$$ \frac{dz}{dt} = xy - \beta z $$
-
-**Parameter Meanings:**
-*   $x, y, z$: Represent the physical state of the fluid (convection rate and temperature gradients).
-*   $\sigma$ (Prandtl Number): Ratio of momentum to thermal diffusivity.
-*   $\rho$ (Rayleigh Number): Heat transfer ratio (Chaos occurs when $\rho \approx 28$).
-*   $\beta$: Represents the geometry of the physical space.
-
----
-
-## 3. Data Engineering & Tracking Workflow
-This project does not just plot numbers; it implements a modern **Data Engineering Pipeline**:
-
-1.  **Numerical Integration:** We use the `scipy.integrate.odeint` library to solve the continuous differential equations. Since computers cannot solve calculus "perfectly," we discretize the time into 5,000 tiny intervals.
-2.  **Data Persistence (The CSV Layer):** Instead of keeping results in temporary memory (RAM), we use `pandas` to convert the mathematical results into a structured **CSV (Comma Separated Values)** file. 
-    *   **Why?** This allows the chaotic path to be tracked and audited. We can open `chaos_tracking_data.csv` in Excel to inspect the specific $(x, y, z)$ coordinates.
-3.  **Graphic Reconstruction:** The final visualization reads the data back from the CSV file rather than the math engine, simulating a real-world scenario where data scientists analyze pre-collected data.
-
----
-
-## 4. Python Implementation
-
-```python
-import numpy as np
-import pandas as pd
-from scipy.integrate import odeint
-import matplotlib.pyplot as plt
-
-# --- STEP 1: MATHEMATICAL LOGIC ---
-def lorenz_system(current_state, t, sigma, rho, beta):
-    x, y, z = current_state
-    dxdt = sigma * (y - x)
-    dydt = x * (rho - z) - y
-    dzdt = x * y - beta * z
-    return [dxdt, dydt, dzdt]
-
-# Constants
-SIGMA, RHO, BETA = 10.0, 28.0, 8.0/3.0
-initial_condition = [1.0, 1.0, 1.0]
-time_steps = np.linspace(0, 50, 5000)
-
-# --- STEP 2: NUMERICAL CALCULATION ---
-solutions = odeint(lorenz_system, initial_condition, time_steps, args=(SIGMA, RHO, BETA))
-
-# --- STEP 3: DATA ENGINEERING (CSV EXPORT) ---
-df = pd.DataFrame(solutions, columns=['X_Coordinate', 'Y_Coordinate', 'Z_Coordinate'])
-df['Timestamp'] = time_steps
-csv_file = "chaos_tracking_data.csv"
-df.to_csv(csv_file, index=False)
-
-# --- STEP 4: GRAPHICAL RECONSTRUCTION ---
-data_to_plot = pd.read_csv(csv_file)
-fig = plt.figure(figsize=(12, 9), facecolor='black')
-ax = fig.add_subplot(111, projection='3d', facecolor='black')
-colors = plt.cm.plasma(np.linspace(0, 1, len(data_to_plot)))
-
-for i in range(len(data_to_plot) - 1):
-    ax.plot(data_to_plot['X_Coordinate'][i:i+2], 
-            data_to_plot['Y_Coordinate'][i:i+2], 
-            data_to_plot['Z_Coordinate'][i:i+2], 
-            color=colors[i], linewidth=0.8)
-
-ax.set_title("3D Lorenz Attractor: Chaos Theory via Data Engineering", color='white', fontsize=15)
-ax.axis('off')
-plt.show()
-
-## 5. *Conclusion*
-By combining Non-linear Differential Equations with Data Engineering techniques, this project demonstrates how we can capture and visualize the complex geometry of chaos. The resulting "Butterfly" shape is not just a drawing; it is the physical representation of thousands of mathematical calculations tracked, saved to a database (CSV), and reconstructed in 3D space. It proves that even in deterministic systems, complexity and beauty can emerge from simple mathematical rules.
